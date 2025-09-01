@@ -149,4 +149,5 @@ STUDENT ANSWER:
         except Exception as e:
             return f"⚠️ LLM error: {e}\n\n" + heuristic_feedback(answer, prompt, criteria, group, topic, band_target)
     else:
-        return heuristic_feedback(answer,_
+        return heuristic_feedback(answer,_)
+
