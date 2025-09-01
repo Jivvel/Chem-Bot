@@ -1,93 +1,57 @@
-import streamlit as st
+import os
+import re
 import random
+import streamlit as st
 
-# ----------------------------
-# Question bank (starter set)
-# ----------------------------
-question_bank = {
-    "Top (Band 5/6 focus)": [
-        {
-            "q": "Explain how Le Chatelier’s principle predicts the effect of increasing temperature on the equilibrium yield of ammonia in the Haber process. (6 marks)",
-            "criteria": [
-                "Identifies exothermic/endothermic nature of the reaction",
-                "States correct direction of equilibrium shift",
-                "Explains reasoning in terms of particle energy",
-                "Links prediction to ammonia yield",
-                "Uses correct scientific terminology",
-            ]
-        },
-        {
-            "q": "Assess the effectiveness of catalysts in industrial chemical processes, using examples from the syllabus. (6 marks)",
-            "criteria": [
-                "Defines role of catalyst",
-                "Explains effect on activation energy",
-                "Provides at least one syllabus example (e.g. Haber process, Contact process)",
-                "Discusses economic or environmental benefit",
-            ]
-        }
-    ],
-    "Middle (Band 4 security)": [
-        {
-            "q": "Calculate the concentration of HCl if 25 mL of the solution required 30.0 mL of 0.100 M NaOH to neutralise. (3 marks)",
-            "criteria": [
-                "Balanced equation: HCl + NaOH → NaCl + H2O",
-                "Correct mole calculation for NaOH",
-                "Final concentration of HCl with units",
-            ]
-        },
-        {
-            "q": "Outline how the pH scale is used to compare acidic and basic solutions. (3 marks)",
-            "criteria": [
-                "Defines pH scale",
-                "Explains relationship between pH and H+/OH- concentration",
-                "Compares acidic vs basic solutions",
-            ]
-        }
-    ],
-    "Lower (avoid Band 2)": [
-        {
-            "q": "What is the dependent variable in an experiment investigating the effect of temperature on the rate of reaction? (1 mark)",
-            "criteria": [
-                "Correctly identifies 'rate of reaction'",
-            ]
-        },
-        {
-            "q": "Define an isotope. (1 mark)",
-            "criteria": [
-                "Atoms of the same element with different numbers of neutrons",
-            ]
-        }
-    ]
-}
+# ---------- CONFIG ----------
+APP_TITLE = "🧪 Chem Bot — HSC Exam Coach"
+INTRO = "Targeted past-paper style questions with marker-style feedback, exemplars, and next steps."
 
-# ----------------------------
-# App layout
-# ----------------------------
-st.title("🧪 Chem Bot – HSC Exam Practice")
-st.write("Get targeted practice questions and feedback for HSC Chemistry.")
+# ---------- QUESTION BANK (starter set; expand freely) ----------
+# Each item has: prompt, criteria (marker points), topic, band_target
+QUESTION_BANK = [
+    # TOP (Band 5/6)
+    {
+        "group": "Top (Band 5/6)",
+        "topic": "Equilibrium / Haber",
+        "prompt": "Explain how Le Chatelier’s principle predicts the effect of increasing temperature on the equilibrium yield of ammonia in the Haber process. (6 marks)",
+        "criteria": [
+            "Identifies exothermic direction of forward reaction for ammonia formation (or correctly states enthalpy change).",
+            "States correct direction of equilibrium shift when temperature increases.",
+            "Explains particle/energy reasoning (collision energy, endothermic favoured when T ↑).",
+            "Links shift to effect on ammonia yield explicitly.",
+            "Uses correct scientific terminology and avoids vague everyday language.",
+            "Provides a concise concluding statement that answers the question."
+        ],
+        "band_target": "Aim: Secure high Band 5 / push to Band 6."
+    },
+    {
+        "group": "Top (Band 5/6)",
+        "topic": "Catalysis",
+        "prompt": "Assess the effectiveness of catalysts in industrial chemical processes, using syllabus-relevant examples. (6 marks)",
+        "criteria": [
+            "Defines catalyst and effect on activation energy (Ea).",
+            "Explains increased rate without shifting equilibrium position.",
+            "Uses at least one relevant industrial example (e.g., Haber, Contact).",
+            "Discusses economic/environmental advantages from catalysis.",
+            "Integrates data/conditions where appropriate (temperature/pressure).",
+            "Clear judgement/assessment, not just description."
+        ],
+        "band_target": "Aim: Secure high Band 5 / push to Band 6."
+    },
 
-level = st.selectbox("Choose your group:", list(question_bank.keys()))
+    # MIDDLE (Band 4 security)
+    {
+        "group": "Middle (Band 4 security)",
+        "topic": "Acid–Base Titration",
+        "prompt": "25.0 mL of HCl is titrated with 0.100 M NaOH. The endpoint occurs at 30.0 mL of NaOH. Calculate the concentration of HCl. (3 marks)",
+        "criteria": [
+            "Balanced: HCl + NaOH → NaCl + H2O (1:1).",
+            "Correct moles of NaOH: n = C × V (in L).",
+            "Correct [HCl] with units and appropriate significant figures."
+        ],
+        "band_target": "Goal: Maximise chance of Band 4."
+    },
+    {
+        "group": "Middle (Band 4 secu
 
-if "current_q" not in st.session_state:
-    st.session_state.current_q = None
-    st.session_state.criteria = None
-
-if st.button("Get Question"):
-    q = random.choice(question_bank[level])
-    st.session_state.current_q = q["q"]
-    st.session_state.criteria = q["criteria"]
-
-if st.session_state.current_q:
-    st.subheader("Question")
-    st.write(st.session_state.current_q)
-
-    answer = st.text_area("Type your answer here:")
-
-    if st.button("Submit Answer"):
-        st.subheader("Feedback")
-        criteria = st.session_state.criteria
-        for point in criteria:
-            if any(word.lower() in answer.lower() for word in point.lower().split()):
-                st.success(f"✅ Covered: {point}")
-            else:
-                st.warning(f"⚠️ Missing: {point} – add this detail next time.")
